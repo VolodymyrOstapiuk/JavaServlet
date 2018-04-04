@@ -5,6 +5,7 @@ import java.util.ResourceBundle;
 public class View {
     public final static String BUNDLE_INDEX = "base";
     public final static String WELCOME_CAPTION_INDEX = "welcome";
+
     public final static String NAME_CAPTION_INDEX = "name_input_caption";
     public final static String SURNAME_CAPTION_INDEX = "surname_input_caption";
     public final static String PATRONYMIC_CAPTION_INDEX = "patronymic_input_caption";
@@ -31,7 +32,7 @@ public class View {
     public final static String INCORRECT_HOUSE_NUMBER_CAPTION_INDEX = "incorrect_house_number_caption";
     public final static String INCORRECT_APARTMENTS_NUMBER_CAPTION_INDEX = "incorrect_apartments_number_caption";
     public final static String NICKNAME_ALREADY_EXISTS_INDEX = "nickname_already_exists";
-
+    public final static String INPUT_EMPTY_CAPTION_INDEX = "input_empty";
     public final  static  ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_INDEX);
     public final static String NICKNAME_ALREADY_EXISTS_CAPTION = bundle.getString(NICKNAME_ALREADY_EXISTS_INDEX);
 
