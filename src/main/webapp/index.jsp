@@ -1,5 +1,6 @@
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 
-<html lang="ru">
+<html>
 <head>
     <meta charset="utf-8">
     <title>sign up form</title>
@@ -7,8 +8,13 @@
 <body>
 <label></label>
 <form action="servlet" method="post">
+    <fmt:setBundle basename="ua.tef.i18n.base"/>
+    <fmt:message key="name_input_caption" var="name_input_caption" />
+    <table align=center class="" dir="${name_input_caption}">
+
     <p>
-        <label for="POST-LastName">LastName:	</label>
+        <fmt:message key="name_input_caption" var="lastname" />
+        <label for="POST-LastName">${lastname}	</label>
         <input id="POST-LastName" type="text" name="LastName">
         <label><font color=red></font> </label>
     <p>
@@ -73,6 +79,7 @@
         <label><font color=red></font> </label>
     <p>
         <input type="submit" value="Save">
+    </table>
 </form>
 </body>
 </html>
