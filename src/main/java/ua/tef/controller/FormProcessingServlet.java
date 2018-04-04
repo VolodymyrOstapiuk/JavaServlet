@@ -39,7 +39,7 @@ public class FormProcessingServlet extends HttpServlet {
         String name = "";
         String surname = "";
         String patronymic;
-        String nickname;
+        String nickname = null;
         String homePhone;
         String firstPhoneNumber;
         String secondPhone;
@@ -69,10 +69,19 @@ public class FormProcessingServlet extends HttpServlet {
             isFieldCorrect = false;
         }
         isFormCorrect = isFieldCorrect;
-
-//        String patronymic= inputStringWithValidation(scanner,View.PATRONYMIC_CAPTION_INDEX,View.INCORRECT_PATRONYMIC_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION);
-//        String nickname = inputStringWithValidation(scanner,View.NICKNAME_CAPTION_INDEX,View.INCORRECT_NICKNAME_CAPTION_INDEX,ValidationRegex.NICKNAME_REGULAR_EXPRESSION);
-//        String comment=  inputStringWithValidation(scanner,View.COMMENT_CAPTION_INDEX,View.INCORRECT_COMMENT_CAPTION_INDEX,ValidationRegex.COMMENT_REGULAR_EXPRESSION);
+        try {
+            nickname = validateWithAddingToErrorsMap(request, errors,FormInputNames.PATRONYMIC_INPUT_NAME,View.PATRONYMIC_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(isFieldCorrect){
+            if(!model.isNickNameAvailable(nickname)){
+                isFieldCorrect = false;
+                errors.put(FormInputNames.NICKNAME_INPUT_NAME,new ValidationError(nickname,View.NICKNAME_ALREADY_EXISTS_CAPTION));
+            }
+        }
+        //        String comment=  inputStringWithValidation(scanner,View.COMMENT_CAPTION_INDEX,View.INCORRECT_COMMENT_CAPTION_INDEX,ValidationRegex.COMMENT_REGULAR_EXPRESSION);
 //        String homePhone= inputStringWithValidation(scanner,View.HOME_PHONE_CAPTION_INDEX,View.INCORRECT_HOME_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION);
 //        String firstPhoneNumber = inputStringWithValidation(scanner,View.MOBILE_PHONE_CAPTION_INDEX,View.INCORRECT_MOBILE_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION);
 //        String secondPhone= inputStringWithValidation(scanner,View.SECOND_PHONE_CAPTION_INDEX,View.INCORRECT_MOBILE_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION);
@@ -81,7 +90,9 @@ public class FormProcessingServlet extends HttpServlet {
 //        String street= inputStringWithValidation(scanner,View.STREET_CAPTION_INDEX,View.INCORRECT_STREET_CAPTION_INDEX,ValidationRegex.STREET_REGULAR_EXPRESSION);
 //        String houseNumberString= inputStringWithValidation(scanner,View.HOUSE_NUMBER_CAPTION_INDEX,View.INCORRECT_HOUSE_NUMBER_CAPTION_INDEX,ValidationRegex.HOUSE_NUMBER_REGULAR_EXPRESSION);
 //        String apartmentNumberString= inputStringWithValidation(scanner,View.APARTMENTS_NUMBER_CAPTION_INDEX,View.INCORRECT_APARTMENTS_NUMBER_CAPTION_INDEX,ValidationRegex.APARTMENT_NUMBER_REGULAR_EXPRESSION);
+        request.setAttribute("errors",errors);
     }
+
 
     private String validateWithAddingToErrorsMap(HttpServletRequest request, HashMap<String, ValidationError> errors,String formInputName, String incorrectKey,String regex,boolean isRequired) throws NotValidInputException {
         boolean isFormCorrect;
