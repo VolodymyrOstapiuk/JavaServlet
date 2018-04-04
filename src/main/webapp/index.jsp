@@ -1,3 +1,5 @@
+<%@ page import="ua.tef.error.ValidationError" %>
+<%@ page import="java.util.Map" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 
 <html>
@@ -11,12 +13,15 @@
     <fmt:setBundle basename="ua.tef.i18n.base"/>
     <fmt:message key="name_input_caption" var="name_input_caption" />
     <table align=center class="" dir="${name_input_caption}">
-
+    <%
+        Map<String,ValidationError> errors = (Map<String, ValidationError>) request.getAttribute("errors");
+    %>
     <p>
         <fmt:message key="name_input_caption" var="lastname" />
+
         <label for="POST-LastName">${lastname}	</label>
         <input id="POST-LastName" type="text" name="LastName">
-        <label><font color=red></font> </label>
+        <label><font color=red></font></label>
     <p>
         <label for="POST-FirstName">FirstName:	</label>
         <input id="POST-FirstName" type="text" name="FirstName">
@@ -36,7 +41,7 @@
     <p>
         <label for="POST-Group">Group:	</label>
         <input id="POST-Group" type="text" name="Group">
-        <label><font color=red></font> </label>
+        <label><font color=red></font></label>
     <p>
         <label for="POST-PhoneNumber">PhoneNumber:	</label>
         <input id="POST-PhoneNumber" type="text" name="PhoneNumber">

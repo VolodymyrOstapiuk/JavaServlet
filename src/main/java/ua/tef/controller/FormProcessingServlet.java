@@ -4,6 +4,8 @@ import ua.tef.error.ValidationError;
 import ua.tef.exception.NotValidInputException;
 import ua.tef.model.Model;
 import ua.tef.model.ValidationRegex;
+import ua.tef.model.entity.Address;
+import ua.tef.model.entity.Consumer;
 import ua.tef.view.View;
 
 import javax.servlet.ServletException;
@@ -22,55 +24,59 @@ public class FormProcessingServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/form.jsp")
-                .forward(request,response);
+        processRequestToForm(request,response);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if(req.getParameter(FormInputNames.NAME_INPUT_NAME)!=null){
-
-        }
+        processConsumer(req,resp);
     }
-    private void processConsumer(HttpServletRequest request){
+    private void processConsumer(HttpServletRequest request,HttpServletResponse response) throws ServletException, IOException {
         HashMap<String,ValidationError> errors = new HashMap<>();
         boolean isFormCorrect = true;
         boolean isFieldCorrect = true;
         String name = "";
         String surname = "";
-        String patronymic;
-        String nickname = null;
-        String homePhone;
-        String firstPhoneNumber;
-        String secondPhone;
-        String addressIndex;
-        String city;
-        String street;
-        String houseNumberString;
-        String apartmentNumberString;
+        String patronymic = "";
+        String nickname = "";
+        String comment = "";
+        String homePhone = "";
+        String firstPhoneNumber= "";
+        String secondPhone= "";
+        String addressIndex = "";
+        String city = "";
+        String street= "";
+        String houseNumberString= "";
+        String apartmentNumberString = "";
         try {
             name = validateWithAddingToErrorsMap(request, errors,FormInputNames.NAME_INPUT_NAME,View.INCORRECT_NAME_CAPTION_INDEX,ValidationRegex.ENGLISH_NAME_REGULAR_EXPRESSION,true);
             isFieldCorrect = true;
         } catch (NotValidInputException e) {
             isFieldCorrect = false;
         }
-        isFormCorrect = isFieldCorrect;
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
         try {
             surname = validateWithAddingToErrorsMap(request, errors,FormInputNames.SURNAME_INPUT_NAME,View.INCORRECT_SURNAME_CAPTION_INDEX,ValidationRegex.ENGLISH_SURNAME_REGULAR_EXPRESSION,true);
             isFieldCorrect = true;
         } catch (NotValidInputException e) {
             isFieldCorrect = false;
         }
-        isFormCorrect = isFieldCorrect;
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
         try {
-            patronymic = validateWithAddingToErrorsMap(request, errors,FormInputNames.PATRONYMIC_INPUT_NAME,View.PATRONYMIC_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION,true);
+            patronymic = validateWithAddingToErrorsMap(request, errors,FormInputNames.PATRONYMIC_INPUT_NAME,View.PATRONYMIC_CAPTION_INDEX,ValidationRegex.NICKNAME_REGULAR_EXPRESSION,true);
             isFieldCorrect = true;
         } catch (NotValidInputException e) {
             isFieldCorrect = false;
         }
-        isFormCorrect = isFieldCorrect;
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
         try {
-            nickname = validateWithAddingToErrorsMap(request, errors,FormInputNames.PATRONYMIC_INPUT_NAME,View.PATRONYMIC_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION,true);
+            nickname = validateWithAddingToErrorsMap(request, errors,FormInputNames.NICKNAME_INPUT_NAME,View.INCORRECT_NICKNAME_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION,true);
             isFieldCorrect = true;
         } catch (NotValidInputException e) {
             isFieldCorrect = false;
@@ -81,16 +87,99 @@ public class FormProcessingServlet extends HttpServlet {
                 errors.put(FormInputNames.NICKNAME_INPUT_NAME,new ValidationError(nickname,View.NICKNAME_ALREADY_EXISTS_CAPTION));
             }
         }
-        //        String comment=  inputStringWithValidation(scanner,View.COMMENT_CAPTION_INDEX,View.INCORRECT_COMMENT_CAPTION_INDEX,ValidationRegex.COMMENT_REGULAR_EXPRESSION);
-//        String homePhone= inputStringWithValidation(scanner,View.HOME_PHONE_CAPTION_INDEX,View.INCORRECT_HOME_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION);
-//        String firstPhoneNumber = inputStringWithValidation(scanner,View.MOBILE_PHONE_CAPTION_INDEX,View.INCORRECT_MOBILE_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION);
-//        String secondPhone= inputStringWithValidation(scanner,View.SECOND_PHONE_CAPTION_INDEX,View.INCORRECT_MOBILE_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION);
-//        String addressIndex= inputStringWithValidation(scanner,View.ADDRESS_INDEX_CAPTION_INDEX,View.INCORRECT_ADDRESS_INDEX_CAPTION_INDEX,ValidationRegex.ADDRESS_INDEX_REGULAR_EXPRESSION);
-//        String city = inputStringWithValidation(scanner,View.CITY_CAPTION_INDEX,View.INCORRECT_CITY_CAPTION_INDEX,ValidationRegex.CITY_REGULAR_EXPRESSION);
-//        String street= inputStringWithValidation(scanner,View.STREET_CAPTION_INDEX,View.INCORRECT_STREET_CAPTION_INDEX,ValidationRegex.STREET_REGULAR_EXPRESSION);
-//        String houseNumberString= inputStringWithValidation(scanner,View.HOUSE_NUMBER_CAPTION_INDEX,View.INCORRECT_HOUSE_NUMBER_CAPTION_INDEX,ValidationRegex.HOUSE_NUMBER_REGULAR_EXPRESSION);
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            comment = validateWithAddingToErrorsMap(request, errors,FormInputNames.COMMENT_INPUT_NAME,View.INCORRECT_COMMENT_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            homePhone = validateWithAddingToErrorsMap(request, errors,FormInputNames.HOMEPHONE_INPUT_NAME,View.INCORRECT_HOME_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            firstPhoneNumber = validateWithAddingToErrorsMap(request, errors,FormInputNames.FIRSTMOBILE_INPUT_NAME,View.INCORRECT_MOBILE_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            secondPhone = validateWithAddingToErrorsMap(request, errors,FormInputNames.SECONDMOBILE_INPUT_NAME,View.INCORRECT_MOBILE_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION,false);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            addressIndex = validateWithAddingToErrorsMap(request, errors,FormInputNames.INDEX_INPUT_NAME,View.INCORRECT_ADDRESS_INDEX_CAPTION_INDEX,ValidationRegex.ADDRESS_INDEX_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            city = validateWithAddingToErrorsMap(request, errors,FormInputNames.CITY_INPUT_NAME,View.INCORRECT_CITY_CAPTION_INDEX,ValidationRegex.CITY_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            houseNumberString = validateWithAddingToErrorsMap(request, errors,FormInputNames.HOUSE_NUMBER_INPUT_NAME,View.INCORRECT_HOUSE_NUMBER_CAPTION_INDEX,ValidationRegex.HOUSE_NUMBER_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            firstPhoneNumber = validateWithAddingToErrorsMap(request, errors,FormInputNames.FIRSTMOBILE_INPUT_NAME,View.INCORRECT_MOBILE_PHONE_CAPTION_INDEX,ValidationRegex.PHONE_NUMBER_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+        try {
+            apartmentNumberString = validateWithAddingToErrorsMap(request, errors,FormInputNames.APPARTMENT_NUMBER_INPUT_NAME,View.INCORRECT_APARTMENTS_NUMBER_CAPTION_INDEX,ValidationRegex.APARTMENT_NUMBER_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        if(!isFieldCorrect){
+            isFormCorrect = false;
+        }
+
 //        String apartmentNumberString= inputStringWithValidation(scanner,View.APARTMENTS_NUMBER_CAPTION_INDEX,View.INCORRECT_APARTMENTS_NUMBER_CAPTION_INDEX,ValidationRegex.APARTMENT_NUMBER_REGULAR_EXPRESSION);
-        request.setAttribute("errors",errors);
+        if(!isFormCorrect) {
+            request.setAttribute("errors", errors);
+            Consumer consumer = new Consumer(name,surname,patronymic,nickname,comment,homePhone,firstPhoneNumber,secondPhone,new Address(addressIndex,city,street,Integer.parseInt(houseNumberString),Integer.parseInt(apartmentNumberString)));
+            processRequestToForm(request,response);
+        }else {
+            processRequestToSuccess(request,response);
+        }
     }
 
 
@@ -113,15 +202,24 @@ public class FormProcessingServlet extends HttpServlet {
             throw new NotValidInputException(errorKey,new ValidationError(input,errorKey));
         }
         return input;
+
     }
 
-    private void processRequest(HttpServletRequest request, HttpServletResponse response)
+    private void processRequestToForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         request.getRequestDispatcher("/form.jsp")
                 .forward(request,response);
 
     }
+    private void processRequestToSuccess(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        request.getRequestDispatcher("/success.jsp")
+                .forward(request,response);
+
+    }
+
     public boolean validate(String input,String regex){
         return input.matches(regex);
     }
