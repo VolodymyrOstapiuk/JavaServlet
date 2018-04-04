@@ -14,7 +14,13 @@ public class Model {
         }
         consumer.toString();
     }
-
+    public boolean isNickNameAvailable(String nickname){
+        if (notepad.isNicknameSet(nickname)){
+            return false;
+        }else {
+            return true;
+        }
+    }
     public Consumer getConsumer() {
         return consumer;
     }

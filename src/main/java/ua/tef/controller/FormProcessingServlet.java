@@ -1,5 +1,8 @@
 package ua.tef.controller;
 
+import ua.tef.error.ValidationError;
+import ua.tef.exception.NotValidInputException;
+import ua.tef.model.Model;
 import ua.tef.model.ValidationRegex;
 import ua.tef.view.View;
 
@@ -11,6 +14,11 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class FormProcessingServlet extends HttpServlet {
+    private Model model;
+
+    public FormProcessingServlet(Model model) {
+        this.model = model;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -25,14 +33,43 @@ public class FormProcessingServlet extends HttpServlet {
         }
     }
     private void processConsumer(HttpServletRequest request){
-        HashMap<String,String> errors = new HashMap<>();
+        HashMap<String,ValidationError> errors = new HashMap<>();
         boolean isFormCorrect = true;
-        String nameError =validateWithErrorReturn(request,FormInputNames.NAME_INPUT_NAME,View.INCORRECT_NAME_CAPTION_INDEX,ValidationRegex.ENGLISH_NAME_REGULAR_EXPRESSION,true);
-        if(!nameError.equals("")){
-            isFormCorrect = false;
+        boolean isFieldCorrect = true;
+        String name = "";
+        String surname = "";
+        String patronymic;
+        String nickname;
+        String homePhone;
+        String firstPhoneNumber;
+        String secondPhone;
+        String addressIndex;
+        String city;
+        String street;
+        String houseNumberString;
+        String apartmentNumberString;
+        try {
+            name = validateWithAddingToErrorsMap(request, errors,FormInputNames.NAME_INPUT_NAME,View.INCORRECT_NAME_CAPTION_INDEX,ValidationRegex.ENGLISH_NAME_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
         }
-//        String name = inputStringWithValidation(scanner, View.NAME_CAPTION_INDEX,View.INCORRECT_NAME_CAPTION_INDEX, ValidationRegex.ENGLISH_NAME_REGULAR_EXPRESSION);
-//        String surname= inputStringWithValidation(scanner,View.SURNAME_CAPTION_INDEX,View.INCORRECT_SURNAME_CAPTION_INDEX,ValidationRegex.ENGLISH_SURNAME_REGULAR_EXPRESSION);
+        isFormCorrect = isFieldCorrect;
+        try {
+            surname = validateWithAddingToErrorsMap(request, errors,FormInputNames.SURNAME_INPUT_NAME,View.INCORRECT_SURNAME_CAPTION_INDEX,ValidationRegex.ENGLISH_SURNAME_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        isFormCorrect = isFieldCorrect;
+        try {
+            patronymic = validateWithAddingToErrorsMap(request, errors,FormInputNames.PATRONYMIC_INPUT_NAME,View.PATRONYMIC_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION,true);
+            isFieldCorrect = true;
+        } catch (NotValidInputException e) {
+            isFieldCorrect = false;
+        }
+        isFormCorrect = isFieldCorrect;
+
 //        String patronymic= inputStringWithValidation(scanner,View.PATRONYMIC_CAPTION_INDEX,View.INCORRECT_PATRONYMIC_CAPTION_INDEX,ValidationRegex.ENGLISH_PATRONYMIC_REGULAR_EXPRESSION);
 //        String nickname = inputStringWithValidation(scanner,View.NICKNAME_CAPTION_INDEX,View.INCORRECT_NICKNAME_CAPTION_INDEX,ValidationRegex.NICKNAME_REGULAR_EXPRESSION);
 //        String comment=  inputStringWithValidation(scanner,View.COMMENT_CAPTION_INDEX,View.INCORRECT_COMMENT_CAPTION_INDEX,ValidationRegex.COMMENT_REGULAR_EXPRESSION);
@@ -46,7 +83,8 @@ public class FormProcessingServlet extends HttpServlet {
 //        String apartmentNumberString= inputStringWithValidation(scanner,View.APARTMENTS_NUMBER_CAPTION_INDEX,View.INCORRECT_APARTMENTS_NUMBER_CAPTION_INDEX,ValidationRegex.APARTMENT_NUMBER_REGULAR_EXPRESSION);
     }
 
-    private String  validateWithErrorReturn(HttpServletRequest request, String formInputName, String incorrectKey,String regex,boolean isRequired) {
+    private String validateWithAddingToErrorsMap(HttpServletRequest request, HashMap<String, ValidationError> errors,String formInputName, String incorrectKey,String regex,boolean isRequired) throws NotValidInputException {
+        boolean isFormCorrect;
         String input;
         String errorKey = "";
         if((input=request.getParameter(formInputName))!=null){
@@ -59,7 +97,11 @@ public class FormProcessingServlet extends HttpServlet {
                 errorKey = incorrectKey;
             }
         }
-        return errorKey;
+          errors.put(formInputName,new ValidationError(input,errorKey));
+        if(!errorKey.equals("")){
+            throw new NotValidInputException(errorKey,new ValidationError(input,errorKey));
+        }
+        return input;
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
