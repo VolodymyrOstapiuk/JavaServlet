@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ResourceBundleManager">
-    <file url="file://$PROJECT_DIR$/src/main/resources/base.properties" />
-    <file url="file://$PROJECT_DIR$/src/main/resources/base_uk_UA.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/java/ua/tef/i18n/base.properties" />
+    <file url="file://$PROJECT_DIR$/src/main/java/ua/tef/i18n/base_uk_UA.properties" />
     <custom-resource-bundle>
-      <file value="file://$PROJECT_DIR$/src/main/resources/base.properties" />
-      <file value="file://$PROJECT_DIR$/src/main/resources/base_uk_UA.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/java/ua/tef/i18n/base.properties" />
+      <file value="file://$PROJECT_DIR$/src/main/java/ua/tef/i18n/base_uk_UA.properties" />
       <base-name>base</base-name>
     </custom-resource-bundle>
   </component>
